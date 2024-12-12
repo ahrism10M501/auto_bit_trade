@@ -1,0 +1,10 @@
+python-dotenv
+openai
+pyupbit
+pyjwt
+ta
+feedparser
+selenium
+pymongo
+streamlit
+streamlit pandas plotly
