@@ -7,4 +7,3 @@ feedparser
 selenium
 pymongo
 streamlit
-streamlit pandas plotly
