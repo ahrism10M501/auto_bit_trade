@@ -878,8 +878,8 @@ Hold: {confidence_adjustments['hold']}
                 
                 if trade_amount > 5000:
                     # 실제 매매를 원할 경우 주석 해제
-                    # order = self.upbit.buy_market_order(self.ticker, amount)
-                    # logging.info(f"Buy order executed: {order}")
+                    order = self.upbit.buy_market_order(self.ticker, trade_amount)
+                    logging.info(f"Buy order executed: {order}")
                     logging.info(f"Buy signal generated for {decision.percentage}% of KRW")
                     logging.info(f"Amount: {trade_amount} KRW")
                     logging.info(f"Reason: {decision.reason}")
@@ -893,8 +893,8 @@ Hold: {confidence_adjustments['hold']}
                 
                 if value > 5000:
                     # 실제 매매를 원할 경우 주석 해제
-                    # order = self.upbit.sell_market_order(self.ticker, my_btc)
-                    # logging.info(f"Sell order executed: {order}")
+                    order = self.upbit.sell_market_order(self.ticker, my_btc)
+                    logging.info(f"Sell order executed: {order}")
                     logging.info(f"Sell signal generated for {decision.percentage}% of BTC")
                     logging.info(f"Amount: {trade_amount} BTC")
                     logging.info(f"Value: {value} KRW")
@@ -976,21 +976,21 @@ def main():
             logging.error(f"Unexpected error: {str(e)}")
             time.sleep(interval/12)
 
-# if __name__ == "__main__":
-#     main()
-
-def test_ai_trader():
-    trader = AITrader()
-    try:
-        # 단일 사이클 실행
-        trader.run()
-        logging.info("Test completed successfully")
-        
-    except Exception as e:
-        logging.error(f"Test failed: {str(e)}")
-
 if __name__ == "__main__":
-    logging.info("Starting test run...")
-    test_ai_trader()
+    main()
+
+# def test_ai_trader():
+#     trader = AITrader()
+#     try:
+#         # 단일 사이클 실행
+#         trader.run()
+#         logging.info("Test completed successfully")
+        
+#     except Exception as e:
+#         logging.error(f"Test failed: {str(e)}")
+
+# if __name__ == "__main__":
+#     logging.info("Starting test run...")
+#     test_ai_trader()
 
     
