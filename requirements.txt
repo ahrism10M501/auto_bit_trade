@@ -9,3 +9,6 @@ pymongo
 streamlit
 pandas
 plotly
+schedule
+motor
+aiocache
