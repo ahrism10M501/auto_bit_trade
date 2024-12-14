@@ -377,128 +377,128 @@ class MarketAnalyzer:
             logging.error(f"Failed to fetch news: {str(e)}")
             return []
         
-    def get_btc_chart_image(self) -> Optional[str]:
-        try:
-            options = webdriver.ChromeOptions()
-            environment = os.getenv("ENVIRONMENT", "local")
+    # def get_btc_chart_image(self) -> Optional[str]:
+    #     try:
+    #         options = webdriver.ChromeOptions()
+    #         environment = os.getenv("ENVIRONMENT", "local")
 
-            if environment == "ec2":
-                 # 필수 시스템 설정
-                options.binary_location = '/usr/bin/google-chrome-stable'
+    #         if environment == "ec2":
+    #              # 필수 시스템 설정
+    #             options.binary_location = '/usr/bin/google-chrome-stable'
                 
-                # 헤드리스 모드 설정
-                options.add_argument('--headless=new')
-                options.add_argument('--no-sandbox')
-                options.add_argument('--disable-dev-shm-usage')
+    #             # 헤드리스 모드 설정
+    #             options.add_argument('--headless=new')
+    #             options.add_argument('--no-sandbox')
+    #             options.add_argument('--disable-dev-shm-usage')
                 
-                # 메모리 최적화 설정
-                options.add_argument('--disable-gpu')
-                options.add_argument('--disable-software-rasterizer')
-                options.add_argument('--disable-dev-tools')
-                options.add_argument('--no-zygote')
+    #             # 메모리 최적화 설정
+    #             options.add_argument('--disable-gpu')
+    #             options.add_argument('--disable-software-rasterizer')
+    #             options.add_argument('--disable-dev-tools')
+    #             options.add_argument('--no-zygote')
                 
-                # 추가적인 안정성 설정
-                options.add_argument('--single-process')
-                options.add_argument('--disable-setuid-sandbox')
-                options.add_argument('--disable-seccomp-filter-sandbox')
+    #             # 추가적인 안정성 설정
+    #             options.add_argument('--single-process')
+    #             options.add_argument('--disable-setuid-sandbox')
+    #             options.add_argument('--disable-seccomp-filter-sandbox')
                 
-                # 공유 메모리 설정
-                options.add_argument('--disable-dev-shm-usage')
-                options.add_argument('--shm-size=2g')
+    #             # 공유 메모리 설정
+    #             options.add_argument('--disable-dev-shm-usage')
+    #             options.add_argument('--shm-size=2g')
                 
-                # 렌더링 관련 설정
-                options.add_argument('--disable-extensions')
-                options.add_argument('--window-size=1920,1080')
-                options.add_argument('--hide-scrollbars')
-                options.add_argument('--enable-automation')
-                options.add_argument('--disable-infobars')
-                options.add_argument('--disable-browser-side-navigation')
-                options.add_argument('--disable-web-security')
+    #             # 렌더링 관련 설정
+    #             options.add_argument('--disable-extensions')
+    #             options.add_argument('--window-size=1920,1080')
+    #             options.add_argument('--hide-scrollbars')
+    #             options.add_argument('--enable-automation')
+    #             options.add_argument('--disable-infobars')
+    #             options.add_argument('--disable-browser-side-navigation')
+    #             options.add_argument('--disable-web-security')
                 
-                # 네트워크 설정
-                options.add_argument('--dns-prefetch-disable')
-                options.add_argument('--no-proxy-server')
+    #             # 네트워크 설정
+    #             options.add_argument('--dns-prefetch-disable')
+    #             options.add_argument('--no-proxy-server')
                 
-                # 로그 레벨 설정
-                options.add_argument('--log-level=3')
-                options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    #             # 로그 레벨 설정
+    #             options.add_argument('--log-level=3')
+    #             options.add_experimental_option('excludeSwitches', ['enable-logging'])
                 
-                service = webdriver.ChromeService(
-                    executable_path='/usr/bin/chromedriver',
-                    log_output=os.path.devnull
-                )
+    #             service = webdriver.ChromeService(
+    #                 executable_path='/usr/bin/chromedriver',
+    #                 log_output=os.path.devnull
+    #             )
                 
-                # 시스템 환경 변수 설정
-                os.environ['CHROME_PATH'] = '/usr/bin/google-chrome-stable'
-                os.environ['CHROMEDRIVER_PATH'] = '/usr/bin/chromedriver'
+    #             # 시스템 환경 변수 설정
+    #             os.environ['CHROME_PATH'] = '/usr/bin/google-chrome-stable'
+    #             os.environ['CHROMEDRIVER_PATH'] = '/usr/bin/chromedriver'
 
-            else:  # local 환경
-                options.add_argument('--window-size=1920,1080')
-                options.add_argument('--no-sandbox')
-                options.add_argument('--disable-dev-shm-usage')
+    #         else:  # local 환경
+    #             options.add_argument('--window-size=1920,1080')
+    #             options.add_argument('--no-sandbox')
+    #             options.add_argument('--disable-dev-shm-usage')
 
-                # GPU 관련 오류 해결을 위한 옵션
-                options.add_argument('--disable-gpu')
-                options.add_argument('--disable-software-rasterizer')
-                options.add_argument('--disable-gpu-sandbox')
-                options.add_argument('--disable-accelerated-2d-canvas')
-                options.add_argument('--disable-accelerated-jpeg-decoding')
-                options.add_argument('--disable-accelerated-mjpeg-decode')
-                options.add_argument('--disable-accelerated-video-decode')
-                options.add_argument('--disable-webgl')
-                options.add_argument('--ignore-gpu-blocklist')
+    #             # GPU 관련 오류 해결을 위한 옵션
+    #             options.add_argument('--disable-gpu')
+    #             options.add_argument('--disable-software-rasterizer')
+    #             options.add_argument('--disable-gpu-sandbox')
+    #             options.add_argument('--disable-accelerated-2d-canvas')
+    #             options.add_argument('--disable-accelerated-jpeg-decoding')
+    #             options.add_argument('--disable-accelerated-mjpeg-decode')
+    #             options.add_argument('--disable-accelerated-video-decode')
+    #             options.add_argument('--disable-webgl')
+    #             options.add_argument('--ignore-gpu-blocklist')
                 
-                # 헤드리스 모드 및 기타 옵션
-                options.add_argument('--headless')
-                options.add_argument('--disable-extensions')
-                options.add_argument('--disable-popup-blocking')
-                options.add_argument('--disable-infobars')
+    #             # 헤드리스 모드 및 기타 옵션
+    #             options.add_argument('--headless')
+    #             options.add_argument('--disable-extensions')
+    #             options.add_argument('--disable-popup-blocking')
+    #             options.add_argument('--disable-infobars')
 
-                service = webdriver.ChromeService()
-            driver = webdriver.Chrome(service=service, options=options)
+    #             service = webdriver.ChromeService()
+    #         driver = webdriver.Chrome(service=service, options=options)
 
-            # 로깅 레벨 설정
-            options.add_argument('--log-level=3')  # WARNING 이상의 로그만 표시
-            options.add_experimental_option('excludeSwitches', ['enable-logging'])  # 불필요한 로그 제외
+    #         # 로깅 레벨 설정
+    #         options.add_argument('--log-level=3')  # WARNING 이상의 로그만 표시
+    #         options.add_experimental_option('excludeSwitches', ['enable-logging'])  # 불필요한 로그 제외
             
-            driver = webdriver.Chrome(options=options)
-            driver.get("https://www.upbit.com/full_chart?code=CRIX.UPBIT.KRW-BTC")
-            driver.set_page_load_timeout(30)
+    #         driver = webdriver.Chrome(options=options)
+    #         driver.get("https://www.upbit.com/full_chart?code=CRIX.UPBIT.KRW-BTC")
+    #         driver.set_page_load_timeout(30)
 
-            try:
-                driver.find_element('xpath', '//*[@id="fullChartiq"]/div/div/div[1]/div/div/cq-menu[1]/span/cq-clickable').click()
-                time.sleep(1)
-                driver.find_element('xpath', '//*[@id="fullChartiq"]/div/div/div[1]/div/div/cq-menu[1]/cq-menu-dropdown/cq-item[8]').click()
-                time.sleep(1)
+    #         try:
+    #             driver.find_element('xpath', '//*[@id="fullChartiq"]/div/div/div[1]/div/div/cq-menu[1]/span/cq-clickable').click()
+    #             time.sleep(1)
+    #             driver.find_element('xpath', '//*[@id="fullChartiq"]/div/div/div[1]/div/div/cq-menu[1]/cq-menu-dropdown/cq-item[8]').click()
+    #             time.sleep(1)
 
-                driver.find_element('xpath', '//*[@id="fullChartiq"]/div/div/div[1]/div/div/cq-menu[3]/span').click()
-                time.sleep(1)
-                driver.find_element('xpath', '//*[@id="fullChartiq"]/div/div/div[1]/div/div/cq-menu[3]/cq-menu-dropdown/cq-scroll/cq-studies/cq-studies-content/cq-item[1]').click()
-                time.sleep(1)
+    #             driver.find_element('xpath', '//*[@id="fullChartiq"]/div/div/div[1]/div/div/cq-menu[3]/span').click()
+    #             time.sleep(1)
+    #             driver.find_element('xpath', '//*[@id="fullChartiq"]/div/div/div[1]/div/div/cq-menu[3]/cq-menu-dropdown/cq-scroll/cq-studies/cq-studies-content/cq-item[1]').click()
+    #             time.sleep(1)
 
-                driver.find_element('xpath', '//*[@id="fullChartiq"]/div/div/div[1]/div/div/cq-menu[3]/span').click()
-                time.sleep(1)
-                driver.find_element('xpath', '//*[@id="fullChartiq"]/div/div/div[1]/div/div/cq-menu[3]/cq-menu-dropdown/cq-scroll/cq-studies/cq-studies-content/cq-item[15]').click()
-                time.sleep(1)
+    #             driver.find_element('xpath', '//*[@id="fullChartiq"]/div/div/div[1]/div/div/cq-menu[3]/span').click()
+    #             time.sleep(1)
+    #             driver.find_element('xpath', '//*[@id="fullChartiq"]/div/div/div[1]/div/div/cq-menu[3]/cq-menu-dropdown/cq-scroll/cq-studies/cq-studies-content/cq-item[15]').click()
+    #             time.sleep(1)
                 
-                # 스크린샷 저장
-                screenshot_path = "btc_chart.png"
-                driver.save_screenshot(screenshot_path)
+    #             # 스크린샷 저장
+    #             screenshot_path = "btc_chart.png"
+    #             driver.save_screenshot(screenshot_path)
                 
-                return screenshot_path
+    #             return screenshot_path
                 
-            except Exception as e:
-                logging.error(f"Failed to add indicators: {str(e)}")
-                screenshot_path = "btc_chart.png"
-                driver.save_screenshot(screenshot_path)
-                return screenshot_path
+    #         except Exception as e:
+    #             logging.error(f"Failed to add indicators: {str(e)}")
+    #             screenshot_path = "btc_chart.png"
+    #             driver.save_screenshot(screenshot_path)
+    #             return screenshot_path
                 
-        except Exception as e:
-            logging.error(f"Failed to capture chart image: {str(e)}")
-            return None
-        finally:
-            if 'driver' in locals():
-                driver.quit()
+    #     except Exception as e:
+    #         logging.error(f"Failed to capture chart image: {str(e)}")
+    #         return None
+    #     finally:
+    #         if 'driver' in locals():
+    #             driver.quit()
 
 # 반성 데이터를 위한 Pydantic 모델 정의
 class TradeMetrics(BaseModel):
@@ -1006,7 +1006,7 @@ class AITrader:
                         })
             
             news_data = self.analyzer.get_crypto_news()
-            chart_image_path = self.analyzer.get_btc_chart_image()
+            # chart_image_path = self.analyzer.get_btc_chart_image()
             
             recent_reflections = db_feedback.get_reflection_history(limit=1)
             reflection_data = {
@@ -1035,10 +1035,10 @@ class AITrader:
                         })
                     })
 
-            base64_image = ""
-            if chart_image_path:
-                with open(chart_image_path, "rb") as image_file:
-                    base64_image = base64.b64encode(image_file.read()).decode('utf-8')
+            # base64_image = ""
+            # if chart_image_path:
+            #     with open(chart_image_path, "rb") as image_file:
+            #         base64_image = base64.b64encode(image_file.read()).decode('utf-8')
 
             # AI에게 제공할 데이터 준비
             analysis_data = {
@@ -1114,15 +1114,15 @@ Hold: {confidence_adjustments['hold']}
                 }
             ]
             
-            # 이미지가 있으면 메시지에 추가
-            if base64_image:
-                AImessage[1]["content"].append({
-                    "type": "image_url",
-                    "image_url": {
-                        "url": f"data:image/jpeg;base64,{base64_image}",
-                        "detail": "high"
-                    }
-                })
+            # # 이미지가 있으면 메시지에 추가
+            # if base64_image:
+            #     AImessage[1]["content"].append({
+            #         "type": "image_url",
+            #         "image_url": {
+            #             "url": f"data:image/jpeg;base64,{base64_image}",
+            #             "detail": "high"
+            #         }
+            #     })
 
             response = self.client.beta.chat.completions.parse(
                 model="gpt-4o-mini",
