@@ -28,14 +28,6 @@ from contextlib import asynccontextmanager
 
 load_dotenv()
 
-
-
-
-
-
-
-
-
 class LoggerSetup:
     def __init__(self, log_dir='logs'):
         self.log_dir = log_dir
@@ -218,22 +210,6 @@ class TradingState:
 # 전역 상태 객체 생성
 TRADING_STATE = TradingState()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class MarketAnalyzer:
     """시장 데이터 분석 클래스"""
     def __init__(self):
@@ -404,28 +380,47 @@ class MarketAnalyzer:
     def get_btc_chart_image(self) -> Optional[str]:
         try:
             options = webdriver.ChromeOptions()
+            environment = os.getenv("ENVIRONMENT", "local")
 
-            options.add_argument('--no-sandbox')
-            options.add_argument('--disable-dev-shm-usage')
-            options.add_argument('--window-size=1920,1080')
-            
-            # GPU 관련 오류 해결을 위한 옵션
-            options.add_argument('--disable-gpu')
-            options.add_argument('--disable-software-rasterizer')
-            options.add_argument('--disable-gpu-sandbox')
-            options.add_argument('--disable-accelerated-2d-canvas')
-            options.add_argument('--disable-accelerated-jpeg-decoding')
-            options.add_argument('--disable-accelerated-mjpeg-decode')
-            options.add_argument('--disable-accelerated-video-decode')
-            options.add_argument('--disable-webgl')
-            options.add_argument('--ignore-gpu-blocklist')
-            
-            # 헤드리스 모드 및 기타 옵션
-            options.add_argument('--headless')
-            options.add_argument('--disable-extensions')
-            options.add_argument('--disable-popup-blocking')
-            options.add_argument('--disable-infobars')
-            
+            if environment == "ec2":
+                options.add_argument('--headless=new')
+                options.add_argument('--no-sandbox')
+                options.add_argument('--disable-dev-shm-usage')
+                options.add_argument('--disable-gpu')
+                options.add_argument('--single-process')
+                options.add_argument('--no-zygote')
+                service = webdriver.ChromeService(
+                    executable_path='/usr/bin/chromedriver',
+                    log_output=os.path.devnull
+                )
+            else:  # local 환경
+                options.add_argument('--disable-gpu')
+                options.add_argument('--window-size=1920,1080')
+
+                options.add_argument('--no-sandbox')
+                options.add_argument('--disable-dev-shm-usage')
+                options.add_argument('--window-size=1920,1080')
+                
+                # GPU 관련 오류 해결을 위한 옵션
+                options.add_argument('--disable-gpu')
+                options.add_argument('--disable-software-rasterizer')
+                options.add_argument('--disable-gpu-sandbox')
+                options.add_argument('--disable-accelerated-2d-canvas')
+                options.add_argument('--disable-accelerated-jpeg-decoding')
+                options.add_argument('--disable-accelerated-mjpeg-decode')
+                options.add_argument('--disable-accelerated-video-decode')
+                options.add_argument('--disable-webgl')
+                options.add_argument('--ignore-gpu-blocklist')
+                
+                # 헤드리스 모드 및 기타 옵션
+                options.add_argument('--headless')
+                options.add_argument('--disable-extensions')
+                options.add_argument('--disable-popup-blocking')
+                options.add_argument('--disable-infobars')
+
+                service = webdriver.ChromeService()
+            driver = webdriver.Chrome(service=service, options=options)
+
             # 로깅 레벨 설정
             options.add_argument('--log-level=3')  # WARNING 이상의 로그만 표시
             options.add_experimental_option('excludeSwitches', ['enable-logging'])  # 불필요한 로그 제외
@@ -471,17 +466,6 @@ class MarketAnalyzer:
         finally:
             if 'driver' in locals():
                 driver.quit()
-
-
-
-
-
-
-
-
-
-
-
 
 # 반성 데이터를 위한 Pydantic 모델 정의
 class TradeMetrics(BaseModel):
@@ -922,19 +906,6 @@ class DB_Feedback:
         except Exception as e:
             logging.error(f"Failed to close MongoDB connection: {str(e)}")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 from enum import Enum
 from pydantic import BaseModel
 
@@ -1238,18 +1209,6 @@ Hold: {confidence_adjustments['hold']}
         except Exception as e:
             logging.error(f"Trading cycle failed: {str(e)}")
 
-
-
-
-
-
-
-
-
-
-
-
-
 class TradingScheduler:
     def __init__(self):
         self.trading_times = {
@@ -1491,4 +1450,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
