@@ -240,6 +240,11 @@ class MarketAnalyzer:
             if not self.validate_dataframe(df):
                 return df
 
+            min_periods = 60  # 가장 긴 이동평균선 기간
+            if len(df) < min_periods:
+                self.logger.warning(f"Insufficient data points. Required: {min_periods}, Got: {len(df)}")
+                return df
+
             # 이동평균선
             df['sma_20'] = ta.trend.sma_indicator(df['close'], window=20)
             df['sma_60'] = ta.trend.sma_indicator(df['close'], window=60)
@@ -962,19 +967,26 @@ class AITrader:
         self.upbit = pyupbit.Upbit(self.access, self.secret)
         self.ticker = "KRW-BTC"
         self.analyzer = MarketAnalyzer()
-            
+
     def get_market_data(self):
         """시장 데이터 수집"""
         try:
-            df = pyupbit.get_ohlcv(self.ticker, count=30, interval="day")
+            # 충분한 데이터를 확보하기 위해 더 많은 기간 요청
+            df = pyupbit.get_ohlcv(self.ticker, count=100, interval="day")
             if df is None or df.empty:
                 raise ValueError("Market data is empty")
             
             retry_count = 3
-            while retry_count > 0 and (df is None or df.empty):
-                asyncio.sleep(1)
-                df = pyupbit.get_ohlcv(self.ticker, count=30, interval="day")
+            while retry_count > 0 and (df is None or len(df) < 60):  # 최소 60개 데이터포인트 확보
+                logging.info(f"Retrying data collection... (attempts left: {retry_count})")
+                df = pyupbit.get_ohlcv(self.ticker, count=100, interval="day")
                 retry_count -= 1
+                if retry_count > 0:  # 재시도 전 잠시 대기
+                    time.sleep(1)
+
+            if df is None or len(df) < 60:
+                logging.error("Failed to get sufficient market data")
+                return None
 
             return self.analyzer.add_technical_indicators(df)
         except Exception as e:
@@ -1246,11 +1258,9 @@ class TradingScheduler:
     def __init__(self):
         self.trading_times = {
             "10:00": datetime.strptime("10:00", "%H:%M").time(),
-            "11:00": datetime.strptime("11:00", "%H:%M").time(),
-            "17:00": datetime.strptime("17:00", "%H:%M").time(),
-            "18:00": datetime.strptime("18:00", "%H:%M").time(),
+            "14:00": datetime.strptime("11:00", "%H:%M").time(),
             "22:00": datetime.strptime("22:00", "%H:%M").time(),
-            "23:00": datetime.strptime("23:00", "%H:%M").time()
+            "02:00": datetime.strptime("23:00", "%H:%M").time()
         }
         self.monitor = MarketEmergencyMonitor()
         self.stop_event = asyncio.Event()
@@ -1385,7 +1395,7 @@ class MarketEmergencyMonitor:
                     pyupbit.get_ohlcv,
                     "KRW-BTC",
                     "minute60",
-                    24
+                    100
                 )
 
                 if df is not None:
