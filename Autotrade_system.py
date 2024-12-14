@@ -383,6 +383,7 @@ class MarketAnalyzer:
             environment = os.getenv("ENVIRONMENT", "local")
 
             if environment == "ec2":
+                options.binary_location = '/usr/bin/google-chrome'
                 options.add_argument('--headless=new')
                 options.add_argument('--no-sandbox')
                 options.add_argument('--disable-dev-shm-usage')
