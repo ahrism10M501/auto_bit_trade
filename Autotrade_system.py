@@ -383,18 +383,30 @@ class MarketAnalyzer:
             environment = os.getenv("ENVIRONMENT", "local")
 
             if environment == "ec2":
+                 # 필수 시스템 설정
                 options.binary_location = '/usr/bin/google-chrome-stable'
+                
+                # 헤드리스 모드 설정
                 options.add_argument('--headless=new')
                 options.add_argument('--no-sandbox')
                 options.add_argument('--disable-dev-shm-usage')
                 
-                # 메모리 관련 옵션 추가
+                # 메모리 최적화 설정
                 options.add_argument('--disable-gpu')
                 options.add_argument('--disable-software-rasterizer')
                 options.add_argument('--disable-dev-tools')
                 options.add_argument('--no-zygote')
                 
-                # 렌더링 관련 옵션
+                # 추가적인 안정성 설정
+                options.add_argument('--single-process')
+                options.add_argument('--disable-setuid-sandbox')
+                options.add_argument('--disable-seccomp-filter-sandbox')
+                
+                # 공유 메모리 설정
+                options.add_argument('--disable-dev-shm-usage')
+                options.add_argument('--shm-size=2g')
+                
+                # 렌더링 관련 설정
                 options.add_argument('--disable-extensions')
                 options.add_argument('--window-size=1920,1080')
                 options.add_argument('--hide-scrollbars')
@@ -403,22 +415,28 @@ class MarketAnalyzer:
                 options.add_argument('--disable-browser-side-navigation')
                 options.add_argument('--disable-web-security')
                 
-                # 네트워크 관련 옵션
+                # 네트워크 설정
                 options.add_argument('--dns-prefetch-disable')
                 options.add_argument('--no-proxy-server')
+                
+                # 로그 레벨 설정
+                options.add_argument('--log-level=3')
+                options.add_experimental_option('excludeSwitches', ['enable-logging'])
                 
                 service = webdriver.ChromeService(
                     executable_path='/usr/bin/chromedriver',
                     log_output=os.path.devnull
                 )
-            else:  # local 환경
-                options.add_argument('--disable-gpu')
-                options.add_argument('--window-size=1920,1080')
+                
+                # 시스템 환경 변수 설정
+                os.environ['CHROME_PATH'] = '/usr/bin/google-chrome-stable'
+                os.environ['CHROMEDRIVER_PATH'] = '/usr/bin/chromedriver'
 
+            else:  # local 환경
+                options.add_argument('--window-size=1920,1080')
                 options.add_argument('--no-sandbox')
                 options.add_argument('--disable-dev-shm-usage')
-                options.add_argument('--window-size=1920,1080')
-                
+
                 # GPU 관련 오류 해결을 위한 옵션
                 options.add_argument('--disable-gpu')
                 options.add_argument('--disable-software-rasterizer')
@@ -443,13 +461,10 @@ class MarketAnalyzer:
             options.add_argument('--log-level=3')  # WARNING 이상의 로그만 표시
             options.add_experimental_option('excludeSwitches', ['enable-logging'])  # 불필요한 로그 제외
             
-
             driver = webdriver.Chrome(options=options)
             driver.get("https://www.upbit.com/full_chart?code=CRIX.UPBIT.KRW-BTC")
             driver.set_page_load_timeout(30)
 
-            # 페이지 완전 로드를 위한 대기
-            time.sleep(5)
             try:
                 driver.find_element('xpath', '//*[@id="fullChartiq"]/div/div/div[1]/div/div/cq-menu[1]/span/cq-clickable').click()
                 time.sleep(1)
