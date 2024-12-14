@@ -386,9 +386,26 @@ class MarketAnalyzer:
                 options.add_argument('--headless=new')
                 options.add_argument('--no-sandbox')
                 options.add_argument('--disable-dev-shm-usage')
+                
+                # 메모리 관련 옵션 추가
                 options.add_argument('--disable-gpu')
-                options.add_argument('--single-process')
+                options.add_argument('--disable-software-rasterizer')
+                options.add_argument('--disable-dev-tools')
                 options.add_argument('--no-zygote')
+                
+                # 렌더링 관련 옵션
+                options.add_argument('--disable-extensions')
+                options.add_argument('--window-size=1920,1080')
+                options.add_argument('--hide-scrollbars')
+                options.add_argument('--enable-automation')
+                options.add_argument('--disable-infobars')
+                options.add_argument('--disable-browser-side-navigation')
+                options.add_argument('--disable-web-security')
+                
+                # 네트워크 관련 옵션
+                options.add_argument('--dns-prefetch-disable')
+                options.add_argument('--no-proxy-server')
+                
                 service = webdriver.ChromeService(
                     executable_path='/usr/bin/chromedriver',
                     log_output=os.path.devnull
