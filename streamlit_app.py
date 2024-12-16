@@ -62,7 +62,7 @@ class OptimizedDBFeedback:
             logging.error(f"Failed to connect to MongoDB: {str(e)}")
             raise
 
-    async def _create_indexes(self):
+    def _create_indexes(self):
         """최적화된 인덱스 생성"""
         indexes = [
             IndexModel([("timestamp", DESCENDING)]),
@@ -75,7 +75,7 @@ class OptimizedDBFeedback:
             ]),
         ]
         
-        await self._collection.create_indexes(indexes)
+        self._collection.create_indexes(indexes)
         
     @aiocache.cached(ttl=300)
     async def get_recent_records(self, limit: int = 10) -> list:
