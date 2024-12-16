@@ -24,18 +24,17 @@ class OptimizedDBFeedback:
         """연결 확인 및 필요시 연결 수립"""
         if self._client is None:
             try:
-                self._client = AsyncIOMotorClient(
-                    os.getenv("MONGO_URL"),
-                    maxPoolSize=50,
-                    serverSelectionTimeoutMS=5000
-                )
+                self._client = MongoClient(
+                os.getenv("MONGO_URL"),
+                serverSelectionTimeoutMS=5000
+                 )
                 
                 self._db = self._client['auto_trading']
                 self._collection = self._db['trade_records']
                 self._reflection_collection = self._db['trade_reflections']
                 
                 # 인덱스 생성
-                await self._create_indexes()
+                self._create_indexes()
                 
             except Exception as e:
                 logging.error(f"Failed to connect to MongoDB: {str(e)}")
@@ -47,9 +46,8 @@ class OptimizedDBFeedback:
             if self._client is not None:
                 await self.close()
                 
-            self._client = AsyncIOMotorClient(
+            self._client = MongoClient(
                 os.getenv("MONGO_URL"),
-                maxPoolSize=50,  # 커넥션 풀 크기
                 serverSelectionTimeoutMS=5000
             )
             
@@ -58,7 +56,7 @@ class OptimizedDBFeedback:
             self._reflection_collection = self._db['trade_reflections']
             
             # 복합 인덱스 생성
-            await self._create_indexes()
+            self._create_indexes()
             
         except Exception as e:
             logging.error(f"Failed to connect to MongoDB: {str(e)}")
